@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Safouane Baadoud — Full-Stack Developer & Automation Engineer." />
+  <title>safOS — Safouane Baadoud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --green:#39ff82; --green-dark:#0b2018; --green-border:#1a4530;
+      --cyan:#33dff0; --yellow:#f0cc33; --orange:#f09033;
+      --purple:#b080f5; --blue:#5090f5; --red:#f55a5a;
+      --bg:#080b10; --bg-panel:#0e1118; --bg-glass:rgba(14,17,24,0.93);
+      --bg-hover:rgba(57,255,130,0.06); --bg-active:rgba(57,255,130,0.12);
+      --border:#1e2535; --border-light:#2a3448;
+      --text:#c0e8c8; --text-muted:#5a7060; --text-dim:#2a3028; --text-white:#d0e8d8;
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.5); --shadow-md:0 8px 32px rgba(0,0,0,0.65); --shadow-lg:0 16px 56px rgba(0,0,0,0.8);
+      --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+      --font:'JetBrains Mono','Courier New',monospace;
+    }
+    html,body { width:100%; height:100%; overflow:hidden; font-family:var(--font); font-size:13px; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    #fx-scanlines { position:fixed; inset:0; pointer-events:none; z-index:9999; background:repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(0,255,80,0.011) 2px,rgba(0,255,80,0.011) 4px); }
+    #fx-vignette  { position:fixed; inset:0; pointer-events:none; z-index:9998; background:radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,0.6) 100%); }
+    #desktop { position:fixed; inset:0; overflow:hidden; background:radial-gradient(ellipse 80% 60% at 50% 45%,rgba(57,255,130,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 15% 80%,rgba(51,223,240,0.03) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 85% 20%,rgba(176,128,245,0.03) 0%,transparent 60%),linear-gradient(160deg,#060810 0%,#080b10 40%,#060d0a 100%); }
+    #desktop::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(57,255,130,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(57,255,130,0.028) 1px,transparent 1px); background-size:44px 44px; mask-image:radial-gradient(ellipse 90% 80% at 50% 50%,black 30%,transparent 100%); }
+    #desktop-wallpaper { position:absolute; inset:0; z-index:0; background-size:cover; background-position:center right; opacity:0.09; filter:blur(1px) saturate(1.6); pointer-events:none; }
+    #topbar { position:fixed; top:0; left:0; right:0; height:28px; background:rgba(6,8,14,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 14px; z-index:5000; user-select:none; }
+    .tb-left { display:flex; align-items:center; gap:20px; }
+    .tb-right { display:flex; align-items:center; gap:18px; font-size:11px; color:var(--text-muted); }
+    .tb-logo { color:var(--green); font-weight:700; font-size:12px; letter-spacing:.08em; display:flex; align-items:center; gap:7px; }
+    .tb-logo-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse-dot 3s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;box-shadow:0 0 8px var(--green);}50%{opacity:.45;box-shadow:0 0 3px var(--green);} }
+    .tb-menu { display:flex; gap:16px; }
+    .tb-menu span { font-size:11px; cursor:pointer; padding:2px 0; transition:color .15s; color:var(--text-muted); }
+    .tb-menu span:hover { color:var(--green); }
+    .tb-github { color:var(--blue) !important; }
+    .tb-github:hover { color:var(--cyan) !important; }
+    .tb-status { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); }
+    .tb-status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
+    .desk-icon { position:absolute; display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 8px 8px; border-radius:var(--radius-md); cursor:pointer; width:76px; border:1px solid transparent; transition:background .15s,border-color .15s; }
+    .desk-icon:hover { background:var(--bg-hover); border-color:var(--border); }
+    .desk-icon:active { background:var(--bg-active); }
+    .icon-img { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); flex-shrink:0; transition:transform .15s; }
+    .desk-icon:hover .icon-img { transform:translateY(-2px); }
+    .icon-img svg { width:22px; height:22px; }
+    .icon-lbl { color:var(--text-white); font-size:10px; text-align:center; line-height:1.3; text-shadow:0 1px 6px rgba(0,0,0,1); font-weight:500; }
+    #taskbar { position:fixed; bottom:0; left:0; right:0; height:54px; display:flex; align-items:center; justify-content:center; gap:6px; padding-bottom:6px; z-index:5000; user-select:none; }
+    .dock-wrap { display:flex; align-items:center; gap:6px; padding:6px 10px; background:rgba(6,8,14,0.93); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow-md); }
+    .dock-sep { width:1px; height:28px; background:var(--border); margin:0 4px; }
+    .dock-btn { width:38px; height:38px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; border:1px solid transparent; transition:background .15s,transform .12s,border-color .15s; background:none; }
+    .dock-btn:hover { background:var(--bg-hover); border-color:var(--border); transform:translateY(-4px) scale(1.08); }
+    .dock-btn:active { transform:translateY(-1px) scale(1.02); }
+    .dock-btn svg { width:20px; height:20px; }
+    .dock-tip { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:var(--bg-panel); border:1px solid var(--border); color:var(--text-white); font-size:10px; font-family:var(--font); padding:4px 10px; border-radius:var(--radius-sm); white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; box-shadow:var(--shadow-sm); }
+    .dock-btn:hover .dock-tip { opacity:1; }
+    .dock-indicator { position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); display:none; }
+    .dock-btn.open .dock-indicator { display:block; }
+    .win { position:fixed; border:1px solid var(--border-light); border-radius:var(--radius-lg); background:var(--bg-glass); backdrop-filter:blur(24px); box-shadow:var(--shadow-lg); display:flex; flex-direction:column; overflow:hidden; z-index:200; transition:opacity .2s ease,transform .2s ease; }
+    .win.hidden { opacity:0; transform:scale(0.93) translateY(8px); pointer-events:none; }
+    .win-bar { height:34px; background:rgba(8,11,18,0.96); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 12px; gap:8px; cursor:grab; flex-shrink:0; user-select:none; }
+    .win-bar:active { cursor:grabbing; }
+    .wdots { display:flex; gap:7px; flex-shrink:0; }
+    .wdot { width:12px; height:12px; border-radius:50%; cursor:pointer; transition:filter .15s; }
+    .wdot:hover { filter:brightness(1.3); }
+    .wdot.cl { background:#ff5f56; } .wdot.mn { background:#ffbd2e; } .wdot.mx { background:#27c93f; }
+    .win-title { flex:1; text-align:center; font-size:11px; color:var(--text-muted); pointer-events:none; letter-spacing:.03em; }
+    .win-spacer { width:44px; }
+    #win-terminal { width:min(720px,calc(100vw - 40px)); height:min(460px,calc(100vh - 130px)); top:70px; left:50%; transform:translateX(-50%); }
+    #term-output { flex:1; overflow-y:auto; padding:14px 18px; line-height:1.85; user-select:text; cursor:text; }
+    #term-output::-webkit-scrollbar { width:3px; } #term-output::-webkit-scrollbar-track { background:transparent; } #term-output::-webkit-scrollbar-thumb { background:#1a2a1a; border-radius:2px; }
+    .tline { display:block; white-space:pre-wrap; word-break:break-word; animation:fadeIn .12s ease both; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(2px);}to{opacity:1;transform:translateY(0);} }
+    #term-inputrow { display:flex; align-items:center; padding:9px 18px; border-top:1px solid var(--border); flex-shrink:0; background:rgba(6,8,14,0.6); }
+    #term-prompt { color:var(--green); font-weight:700; white-space:nowrap; user-select:none; font-size:13px; }
+    #term-input { flex:1; background:transparent; border:none; outline:none; color:var(--text-white); font-family:var(--font); font-size:13px; caret-color:var(--green); padding:0 7px; user-select:text; }
+    #win-about { width:320px; top:70px; left:60px; }
+    .about-body { padding:20px 22px; }
+    .about-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:18px; }
+    .about-avatar { width:60px; height:60px; border-radius:13px; background:var(--green-dark); border:2px solid var(--green-border); overflow:hidden; flex-shrink:0; box-shadow:0 0 18px rgba(57,255,130,0.18); }
+    .about-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .about-name { color:var(--green); font-weight:700; font-size:14px; line-height:1.3; }
+    .about-role { color:var(--text-muted); font-size:10px; margin-top:4px; line-height:1.5; }
+    .about-divider { border:none; border-top:1px solid var(--border); margin:0 0 14px; }
+    .about-row { display:flex; align-items:baseline; gap:10px; font-size:11px; margin-bottom:8px; }
+    .about-key { color:var(--text-muted); width:58px; flex-shrink:0; font-size:10px; }
+    .about-val { color:var(--text-white); line-height:1.5; }
+    .about-val.green { color:var(--green); } .about-val.cyan { color:var(--cyan); }
+    .about-desc { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:11px; color:var(--text-muted); line-height:1.85; }
+    #win-projects { width:370px; top:70px; right:60px; }
+    .proj-body { padding:14px 16px; }
+    .proj-item { padding:13px 14px; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:8px; transition:border-color .15s,background .15s; cursor:default; }
+    .proj-item:hover { border-color:var(--border-light); background:rgba(57,255,130,0.03); }
+    .proj-item:last-child { margin-bottom:0; }
+    .proj-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+    .proj-name { font-size:12px; font-weight:700; display:flex; align-items:center; gap:7px; }
+    .proj-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .proj-badge { font-size:9px; padding:2px 7px; border-radius:4px; border:1px solid; letter-spacing:.05em; }
+    .proj-desc { font-size:11px; color:var(--text-muted); line-height:1.7; margin-bottom:8px; }
+    .proj-stack { display:flex; flex-wrap:wrap; gap:4px; }
+    .proj-tag { font-size:9px; padding:1px 7px; border-radius:3px; border:1px solid; }
+    #win-skills { width:290px; bottom:70px; left:60px; }
+    .skills-body { padding:14px 16px; }
+    .skill-group { margin-bottom:14px; } .skill-group:last-child { margin-bottom:0; }
+    .sg-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sg-title { font-size:9px; font-weight:700; letter-spacing:.1em; color:var(--text-muted); }
+    .sg-line { flex:1; height:1px; background:var(--border); }
+    .skill-tags { display:flex; flex-wrap:wrap; gap:5px; }
+    .stag { font-size:10px; padding:3px 9px; border-radius:4px; border:1px solid; cursor:default; transition:filter .15s; }
+    .stag:hover { filter:brightness(1.2); }
+    .stag-g { color:var(--green);  background:rgba(57,255,130,0.07);  border-color:rgba(57,255,130,0.2);  }
+    .stag-b { color:var(--cyan);   background:rgba(51,223,240,0.07);  border-color:rgba(51,223,240,0.2);  }
+    .stag-y { color:var(--yellow); background:rgba(240,204,51,0.07);  border-color:rgba(240,204,51,0.2);  }
+    .stag-d { color:var(--text-muted); background:rgba(255,255,255,0.04); border-color:var(--border); }
+    #win-contact { width:280px; bottom:70px; right:60px; }
+    .contact-body { padding:14px 16px; }
+    .contact-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:7px; cursor:pointer; transition:border-color .15s,background .15s; text-decoration:none; }
+    .contact-item:last-child { margin-bottom:0; }
+    .contact-item:hover { border-color:var(--border-light); background:var(--bg-hover); }
+    .contact-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid; }
+    .contact-icon svg { width:15px; height:15px; }
+    .contact-label { font-size:9px; color:var(--text-muted); letter-spacing:.06em; margin-bottom:2px; }
+    .contact-value { font-size:11px; color:var(--text-white); }
+    .g{color:var(--green);} .cy{color:var(--cyan);} .y{color:var(--yellow);} .o{color:var(--orange);}
+    .p{color:var(--purple);} .b{color:var(--blue);} .r{color:var(--red);}
+    .d{color:var(--text-dim);} .m{color:var(--text-muted);} .w{color:var(--text-white);}
+    .bld{font-weight:700;} .it{font-style:italic;}
+    .tsec{color:var(--green);font-weight:700;display:block;border-bottom:1px solid var(--green-border);padding-bottom:1px;}
+    .ttag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:4px;border:1px solid;margin:2px 3px 2px 0;}
+    .ttag-g{color:var(--green);background:rgba(57,255,130,0.07);border-color:rgba(57,255,130,0.2);}
+    .ttag-b{color:var(--cyan);background:rgba(51,223,240,0.07);border-color:rgba(51,223,240,0.2);}
+    .ttag-y{color:var(--yellow);background:rgba(240,204,51,0.07);border-color:rgba(240,204,51,0.2);}
+    .asc{color:var(--green);font-size:10px;line-height:1.2;}
+    #boot-screen { position:fixed; inset:0; background:var(--bg); z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .5s ease; }
+    #boot-screen.fade-out { opacity:0; pointer-events:none; }
+    .boot-logo { font-size:10px; line-height:1.15; color:var(--green); text-align:center; margin-bottom:28px; animation:glow-text 2.5s ease-in-out infinite alternate; }
+    @keyframes glow-text { from{text-shadow:0 0 8px rgba(57,255,130,0.35);}to{text-shadow:0 0 22px rgba(57,255,130,0.7);} }
+    .boot-log { width:340px; font-size:11px; }
+    .boot-entry { display:flex; gap:10px; margin-bottom:5px; opacity:0; animation:slideIn .25s ease forwards; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-6px);}to{opacity:1;transform:translateX(0);} }
+    .boot-ok { color:var(--green); flex-shrink:0; } .boot-info { color:var(--text-muted); }
+    .boot-bar-wrap { width:340px; height:2px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:20px; }
+    .boot-bar { height:100%; width:0; background:var(--green); border-radius:2px; transition:width .12s linear; box-shadow:0 0 8px var(--green); }
+    .boot-hint { margin-top:14px; font-size:10px; color:var(--text-dim); letter-spacing:.05em; }
+    #ctx-menu { position:fixed; background:var(--bg-panel); border:1px solid var(--border-light); border-radius:var(--radius-md); box-shadow:var(--shadow-md); padding:4px; z-index:8000; min-width:165px; opacity:0; transform:scale(0.95); transition:opacity .12s,transform .12s; pointer-events:none; }
+    #ctx-menu.show { opacity:1; transform:scale(1); pointer-events:all; }
+    .ctx-item { display:flex; align-items:center; gap:9px; padding:7px 12px; border-radius:var(--radius-sm); font-size:11px; color:var(--text-white); cursor:pointer; transition:background .1s; }
+    .ctx-item:hover { background:var(--bg-hover); }
+    .ctx-item svg { width:13px; height:13px; flex-shrink:0; }
+    .ctx-sep { height:1px; background:var(--border); margin:4px 0; }
+    .ctx-label { font-size:9px; color:var(--text-muted); padding:6px 12px 2px; letter-spacing:.06em; }
+    #mobile-wall { display:none; position:fixed; inset:0; background:var(--bg); z-index:99999; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:32px; text-align:center; }
+    #mobile-wall .ml { color:var(--green); font-size:18px; font-weight:700; }
+    #mobile-wall p { color:var(--text-muted); font-size:12px; line-height:1.9; }
+    #mobile-wall a { color:var(--cyan); text-decoration:none; }
+    @media (max-width:700px) { #mobile-wall{display:flex;} body > *:not(#mobile-wall){display:none !important;} }
+
+  </style>
+</head>
+<body>
+<div id="mobile-wall">
+  <div class="ml">safOS v1.0</div>
+  <p>This portfolio is an interactive desktop experience.<br>Best viewed on a laptop or desktop browser.</p>
+  <p><a href="https://github.com/safouane02" target="_blank" rel="noopener">github.com/safouane02</a><br><a href="mailto:safouanebaadoud@gmail.com">safouanebaadoud@gmail.com</a></p>
+</div>
+<div id="fx-scanlines"></div>
+<div id="fx-vignette"></div>
+<div id="boot-screen">
+  <pre class="boot-logo" id="boot-ascii"></pre>
+  <div class="boot-log" id="boot-log"></div>
+  <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
+  <div class="boot-hint">initializing safOS...</div>
+</div>
+<div id="desktop">
+  <svg id="desktop-wallpaper" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 900">
+  <defs>
+    <radialGradient id="glow1" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#39ff82" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#080b10" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="15%" cy="80%" r="40%">
+      <stop offset="0%" stop-color="#33dff0" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#080b10" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="85%" cy="20%" r="35%">
+      <stop offset="0%" stop-color="#b080f5" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#080b10" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur-sm"><feGaussianBlur stdDeviation="0.5"/></filter>
+  </defs>
+
+  <!-- Base dark bg -->
+  <rect width="1440" height="900" fill="#080b10"/>
+
+  <!-- Glow blobs -->
+  <rect width="1440" height="900" fill="url(#glow1)"/>
+  <rect width="1440" height="900" fill="url(#glow2)"/>
+  <rect width="1440" height="900" fill="url(#glow3)"/>
+
+  <!-- Grid lines horizontal -->
+  <g stroke="#39ff82" stroke-opacity="0.028" stroke-width="1">
+    <line x1="0" y1="44"  x2="1440" y2="44"/>
+    <line x1="0" y1="88"  x2="1440" y2="88"/>
+    <line x1="0" y1="132" x2="1440" y2="132"/>
+    <line x1="0" y1="176" x2="1440" y2="176"/>
+    <line x1="0" y1="220" x2="1440" y2="220"/>
+    <line x1="0" y1="264" x2="1440" y2="264"/>
+    <line x1="0" y1="308" x2="1440" y2="308"/>
+    <line x1="0" y1="352" x2="1440" y2="352"/>
+    <line x1="0" y1="396" x2="1440" y2="396"/>
+    <line x1="0" y1="440" x2="1440" y2="440"/>
+    <line x1="0" y1="484" x2="1440" y2="484"/>
+    <line x1="0" y1="528" x2="1440" y2="528"/>
+    <line x1="0" y1="572" x2="1440" y2="572"/>
+    <line x1="0" y1="616" x2="1440" y2="616"/>
+    <line x1="0" y1="660" x2="1440" y2="660"/>
+    <line x1="0" y1="704" x2="1440" y2="704"/>
+    <line x1="0" y1="748" x2="1440" y2="748"/>
+    <line x1="0" y1="792" x2="1440" y2="792"/>
+    <line x1="0" y1="836" x2="1440" y2="836"/>
+    <line x1="0" y1="880" x2="1440" y2="880"/>
+  </g>
+  <!-- Grid lines vertical -->
+  <g stroke="#39ff82" stroke-opacity="0.028" stroke-width="1">
+    <line x1="44"   y1="0" x2="44"   y2="900"/>
+    <line x1="88"   y1="0" x2="88"   y2="900"/>
+    <line x1="132"  y1="0" x2="132"  y2="900"/>
+    <line x1="176"  y1="0" x2="176"  y2="900"/>
+    <line x1="220"  y1="0" x2="220"  y2="900"/>
+    <line x1="264"  y1="0" x2="264"  y2="900"/>
+    <line x1="308"  y1="0" x2="308"  y2="900"/>
+    <line x1="352"  y1="0" x2="352"  y2="900"/>
+    <line x1="396"  y1="0" x2="396"  y2="900"/>
+    <line x1="440"  y1="0" x2="440"  y2="900"/>
+    <line x1="484"  y1="0" x2="484"  y2="900"/>
+    <line x1="528"  y1="0" x2="528"  y2="900"/>
+    <line x1="572"  y1="0" x2="572"  y2="900"/>
+    <line x1="616"  y1="0" x2="616"  y2="900"/>
+    <line x1="660"  y1="0" x2="660"  y2="900"/>
+    <line x1="704"  y1="0" x2="704"  y2="900"/>
+    <line x1="748"  y1="0" x2="748"  y2="900"/>
+    <line x1="792"  y1="0" x2="792"  y2="900"/>
+    <line x1="836"  y1="0" x2="836"  y2="900"/>
+    <line x1="880"  y1="0" x2="880"  y2="900"/>
+    <line x1="924"  y1="0" x2="924"  y2="900"/>
+    <line x1="968"  y1="0" x2="968"  y2="900"/>
+    <line x1="1012" y1="0" x2="1012" y2="900"/>
+    <line x1="1056" y1="0" x2="1056" y2="900"/>
+    <line x1="1100" y1="0" x2="1100" y2="900"/>
+    <line x1="1144" y1="0" x2="1144" y2="900"/>
+    <line x1="1188" y1="0" x2="1188" y2="900"/>
+    <line x1="1232" y1="0" x2="1232" y2="900"/>
+    <line x1="1276" y1="0" x2="1276" y2="900"/>
+    <line x1="1320" y1="0" x2="1320" y2="900"/>
+    <line x1="1364" y1="0" x2="1364" y2="900"/>
+    <line x1="1408" y1="0" x2="1408" y2="900"/>
+  </g>
+
+  <!-- Central large ASCII-style "safOS" watermark -->
+  <text x="720" y="430" text-anchor="middle" font-family="'Courier New',monospace" font-size="96" font-weight="700" fill="#39ff82" fill-opacity="0.035" letter-spacing="24">safOS</text>
+  <text x="720" y="490" text-anchor="middle" font-family="'Courier New',monospace" font-size="14" fill="#39ff82" fill-opacity="0.055" letter-spacing="6">Safouane Baadoud · Full-Stack Developer &amp; Automation Engineer</text>
+
+  <!-- Decorative circuit-like lines bottom-right -->
+  <g stroke="#33dff0" stroke-opacity="0.07" stroke-width="1" fill="none">
+    <polyline points="900,600 950,600 950,650 1100,650 1100,700 1200,700"/>
+    <circle cx="950" cy="600" r="3" fill="#33dff0" fill-opacity="0.1"/>
+    <circle cx="1100" cy="650" r="3" fill="#33dff0" fill-opacity="0.1"/>
+    <polyline points="1050,750 1050,800 1150,800 1150,760 1300,760"/>
+    <circle cx="1050" cy="800" r="3" fill="#33dff0" fill-opacity="0.1"/>
+    <circle cx="1150" cy="760" r="3" fill="#33dff0" fill-opacity="0.1"/>
+    <polyline points="1200,820 1250,820 1250,850 1400,850"/>
+    <polyline points="980,680 980,720 1080,720 1080,690 1220,690"/>
+    <circle cx="980" cy="720" r="2" fill="#33dff0" fill-opacity="0.1"/>
+  </g>
+
+  <!-- Decorative circuit top-right -->
+  <g stroke="#b080f5" stroke-opacity="0.06" stroke-width="1" fill="none">
+    <polyline points="1050,80 1050,120 1150,120 1150,90 1350,90"/>
+    <circle cx="1150" cy="120" r="3" fill="#b080f5" fill-opacity="0.1"/>
+    <polyline points="1100,50 1200,50 1200,140 1280,140"/>
+    <circle cx="1200" cy="50" r="2" fill="#b080f5" fill-opacity="0.1"/>
+    <polyline points="1300,60 1380,60 1380,110 1440,110"/>
+  </g>
+
+  <!-- Decorative dots scattered -->
+  <g fill="#39ff82" fill-opacity="0.12">
+    <circle cx="200" cy="200" r="1.5"/>
+    <circle cx="380" cy="150" r="1"/>
+    <circle cx="560" cy="300" r="1.5"/>
+    <circle cx="820" cy="180" r="1"/>
+    <circle cx="1050" cy="250" r="1.5"/>
+    <circle cx="1280" cy="180" r="1"/>
+    <circle cx="300" cy="500" r="1"/>
+    <circle cx="700" cy="650" r="1.5"/>
+    <circle cx="1100" cy="550" r="1"/>
+    <circle cx="150" cy="700" r="1.5"/>
+    <circle cx="450" cy="780" r="1"/>
+    <circle cx="900" cy="800" r="1.5"/>
+  </g>
+
+  <!-- Small terminal prompt watermark bottom left -->
+  <text x="120" y="820" font-family="'Courier New',monospace" font-size="11" fill="#39ff82" fill-opacity="0.12">safouane@safOS:~$</text>
+  <text x="120" y="840" font-family="'Courier New',monospace" font-size="10" fill="#39ff82" fill-opacity="0.07">github.com/safouane02</text>
+
+  <!-- Vignette overlay -->
+  <radialGradient id="vign" cx="50%" cy="50%" r="70%">
+    <stop offset="40%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="#040608" stop-opacity="0.7"/>
+  </radialGradient>
+  <rect width="1440" height="900" fill="url(#vign)"/>
+</svg>
+  <div class="desk-icon" style="top:50px;left:22px;" data-target="win-terminal">
+    <div class="icon-img" style="background:#081e12;border-color:#1a4530;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+    <span class="icon-lbl">Terminal</span>
+  </div>
+  <div class="desk-icon" style="top:138px;left:22px;" data-target="win-about">
+    <div class="icon-img" style="background:#12082a;border-color:#2c1a50;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+    <span class="icon-lbl">About</span>
+  </div>
+  <div class="desk-icon" style="top:226px;left:22px;" data-target="win-projects">
+    <div class="icon-img" style="background:#1a1000;border-color:#3d2c00;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+    <span class="icon-lbl">Projects</span>
+  </div>
+  <div class="desk-icon" style="top:314px;left:22px;" data-target="win-skills">
+    <div class="icon-img" style="background:#0a1020;border-color:#1a2840;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+    <span class="icon-lbl">Skills</span>
+  </div>
+  <div class="desk-icon" style="top:402px;left:22px;" data-target="win-contact">
+    <div class="icon-img" style="background:#1a0a0a;border-color:#401a1a;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+    <span class="icon-lbl">Contact</span>
+  </div>
+  <div class="desk-icon" style="top:490px;left:22px;" data-target="github">
+    <div class="icon-img" style="background:#0a101a;border-color:#1a2440;"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+    <span class="icon-lbl">GitHub</span>
+  </div>
+</div>
+<div id="topbar">
+  <div class="tb-left">
+    <div class="tb-logo"><div class="tb-logo-dot"></div>safOS</div>
+    <nav class="tb-menu">
+      <span data-target="win-terminal">Terminal</span>
+      <span data-target="win-about">About</span>
+      <span data-target="win-projects">Projects</span>
+      <span data-target="win-skills">Skills</span>
+      <span data-target="win-contact">Contact</span>
+      <span data-target="github" class="tb-github">GitHub &#x2197;</span>
+    </nav>
+  </div>
+  <div class="tb-right">
+    <div class="tb-status"><div class="tb-status-dot"></div><span>safouane@safOS</span></div>
+    <span id="tb-clock">--:--</span>
+  </div>
+</div>
+<div id="taskbar">
+  <div class="dock-wrap">
+    <button class="dock-btn" id="dock-terminal" data-target="win-terminal" aria-label="Terminal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span class="dock-tip">Terminal</span><div class="dock-indicator"></div>
+    </button>
+    <button class="dock-btn" id="dock-about" data-target="win-about" aria-label="About">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span class="dock-tip">About Me</span><div class="dock-indicator"></div>
+    </button>
+    <button class="dock-btn" id="dock-projects" data-target="win-projects" aria-label="Projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span class="dock-tip">Projects</span><div class="dock-indicator"></div>
+    </button>
+    <button class="dock-btn" id="dock-skills" data-target="win-skills" aria-label="Skills">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span class="dock-tip">Skills</span><div class="dock-indicator"></div>
+    </button>
+    <button class="dock-btn" id="dock-contact" data-target="win-contact" aria-label="Contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="dock-tip">Contact</span><div class="dock-indicator"></div>
+    </button>
+    <div class="dock-sep"></div>
+    <button class="dock-btn" data-target="github" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      <span class="dock-tip">GitHub</span>
+    </button>
+  </div>
+</div>
+<!-- Window: Terminal -->
+<div class="win hidden" id="win-terminal">
+  <div class="win-bar" data-drag="win-terminal">
+    <div class="wdots"><div class="wdot cl" data-close="win-terminal"></div><div class="wdot mn" data-min="win-terminal"></div><div class="wdot mx" data-max="win-terminal"></div></div>
+    <span class="win-title">safouane@safOS: ~  —  bash</span><div class="win-spacer"></div>
+  </div>
+  <div id="term-output"></div>
+  <div id="term-inputrow">
+    <span id="term-prompt">safouane@safOS:~$&nbsp;</span>
+    <input id="term-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+  </div>
+</div>
+<!-- Window: About -->
+<div class="win hidden" id="win-about">
+  <div class="win-bar" data-drag="win-about">
+    <div class="wdots"><div class="wdot cl" data-close="win-about"></div><div class="wdot mn" data-min="win-about"></div><div class="wdot mx" data-max="win-about"></div></div>
+    <span class="win-title">about.txt — safouane</span><div class="win-spacer"></div>
+  </div>
+  <div class="about-body">
+    <div class="about-header">
+      <div class="about-avatar"><img src="data:image/jpeg;base64,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" alt="Safouane Baadoud" /></div>
+      <div><div class="about-name">Safouane Baadoud</div><div class="about-role">Full-Stack Developer<br>&amp; Automation Engineer</div></div>
+    </div>
+    <hr class="about-divider" />
+    <div class="about-row"><span class="about-key">LOCATION</span><span class="about-val">Algeria &#x1F1E9;&#x1F1FF;</span></div>
+    <div class="about-row"><span class="about-key">EMAIL</span><span class="about-val cyan">safouanebaadoud@gmail.com</span></div>
+    <div class="about-row"><span class="about-key">GITHUB</span><span class="about-val green">github.com/safouane02</span></div>
+    <div class="about-row"><span class="about-key">PHONE</span><span class="about-val">+213 663 580 460</span></div>
+    <div class="about-row"><span class="about-key">LANGS</span><span class="about-val">Arabic · English · French</span></div>
+    <div class="about-desc">Specialized in modern web apps, automation tools,<br>bots, scraping systems &amp; desktop applications.<br>Passionate about clean, scalable code and<br>crafting great user experiences.</div>
+  </div>
+</div>
+<!-- Window: Projects -->
+<div class="win hidden" id="win-projects">
+  <div class="win-bar" data-drag="win-projects">
+    <div class="wdots"><div class="wdot cl" data-close="win-projects"></div><div class="wdot mn" data-min="win-projects"></div><div class="wdot mx" data-max="win-projects"></div></div>
+    <span class="win-title">projects/ — 4 items</span><div class="win-spacer"></div>
+  </div>
+  <div class="proj-body">
+    <div class="proj-item">
+      <div class="proj-header"><div class="proj-name"><div class="proj-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div><span style="color:var(--green);">Safouane Escrow System</span></div><div class="proj-badge" style="color:var(--green);border-color:var(--green-border);background:var(--green-dark);">Web App</div></div>
+      <div class="proj-desc">Secure platform for online service transactions with transparent lifecycle management.</div>
+      <div class="proj-stack"><span class="proj-tag" style="color:var(--green);border-color:var(--green-border);background:var(--green-dark);">React</span><span class="proj-tag" style="color:var(--green);border-color:var(--green-border);background:var(--green-dark);">Tailwind</span><span class="proj-tag" style="color:var(--green);border-color:var(--green-border);background:var(--green-dark);">API</span></div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-header"><div class="proj-name"><div class="proj-dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan);"></div><span style="color:var(--cyan);">SF Discord Bot</span></div><div class="proj-badge" style="color:var(--cyan);border-color:rgba(51,223,240,.3);background:rgba(51,223,240,.07);">Bot</div></div>
+      <div class="proj-desc">Advanced bot with 100+ commands — moderation, automation, and music playback for large servers.</div>
+      <div class="proj-stack"><span class="proj-tag" style="color:var(--cyan);border-color:rgba(51,223,240,.3);background:rgba(51,223,240,.07);">Python</span><span class="proj-tag" style="color:var(--cyan);border-color:rgba(51,223,240,.3);background:rgba(51,223,240,.07);">Discord.py</span></div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-header"><div class="proj-name"><div class="proj-dot" style="background:var(--yellow);box-shadow:0 0 6px var(--yellow);"></div><span style="color:var(--yellow);">Excel Automation Tool</span></div><div class="proj-badge" style="color:var(--yellow);border-color:rgba(240,204,51,.3);background:rgba(240,204,51,.07);">Desktop</div></div>
+      <div class="proj-desc">Cleans messy Excel datasets and auto-generates formatted reports and charts with zero friction.</div>
+      <div class="proj-stack"><span class="proj-tag" style="color:var(--yellow);border-color:rgba(240,204,51,.3);background:rgba(240,204,51,.07);">Python</span><span class="proj-tag" style="color:var(--yellow);border-color:rgba(240,204,51,.3);background:rgba(240,204,51,.07);">openpyxl</span><span class="proj-tag" style="color:var(--yellow);border-color:rgba(240,204,51,.3);background:rgba(240,204,51,.07);">pandas</span></div>
+    </div>
+    <div class="proj-item">
+      <div class="proj-header"><div class="proj-name"><div class="proj-dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple);"></div><span style="color:var(--purple);">safOS Portfolio</span></div><div class="proj-badge" style="color:var(--purple);border-color:rgba(176,128,245,.3);background:rgba(176,128,245,.07);">Portfolio</div></div>
+      <div class="proj-desc">This very site — an interactive OS-style portfolio. Because normal portfolios are boring.</div>
+      <div class="proj-stack"><span class="proj-tag" style="color:var(--purple);border-color:rgba(176,128,245,.3);background:rgba(176,128,245,.07);">HTML</span><span class="proj-tag" style="color:var(--purple);border-color:rgba(176,128,245,.3);background:rgba(176,128,245,.07);">CSS</span><span class="proj-tag" style="color:var(--purple);border-color:rgba(176,128,245,.3);background:rgba(176,128,245,.07);">Vanilla JS</span></div>
+    </div>
+  </div>
+</div>
+<!-- Window: Skills -->
+<div class="win hidden" id="win-skills">
+  <div class="win-bar" data-drag="win-skills">
+    <div class="wdots"><div class="wdot cl" data-close="win-skills"></div><div class="wdot mn" data-min="win-skills"></div><div class="wdot mx" data-max="win-skills"></div></div>
+    <span class="win-title">skills.json</span><div class="win-spacer"></div>
+  </div>
+  <div class="skills-body">
+    <div class="skill-group"><div class="sg-header"><span class="sg-title">FRONTEND</span><div class="sg-line"></div></div><div class="skill-tags"><span class="stag stag-g">React.js</span><span class="stag stag-g">Vite</span><span class="stag stag-g">Tailwind CSS</span><span class="stag stag-g">HTML5</span><span class="stag stag-g">CSS3</span></div></div>
+    <div class="skill-group"><div class="sg-header"><span class="sg-title">BACKEND &amp; AUTOMATION</span><div class="sg-line"></div></div><div class="skill-tags"><span class="stag stag-b">Python</span><span class="stag stag-b">Selenium</span><span class="stag stag-b">Playwright</span><span class="stag stag-b">Web Scraping</span></div></div>
+    <div class="skill-group"><div class="sg-header"><span class="sg-title">DESKTOP &amp; BOTS</span><div class="sg-line"></div></div><div class="skill-tags"><span class="stag stag-y">PyQt5</span><span class="stag stag-y">Tkinter</span><span class="stag stag-y">Discord Bots</span></div></div>
+    <div class="skill-group"><div class="sg-header"><span class="sg-title">TOOLS</span><div class="sg-line"></div></div><div class="skill-tags"><span class="stag stag-d">Git</span><span class="stag stag-d">GitHub</span><span class="stag stag-d">API Integration</span><span class="stag stag-d">Render</span></div></div>
+  </div>
+</div>
+<!-- Window: Contact -->
+<div class="win hidden" id="win-contact">
+  <div class="win-bar" data-drag="win-contact">
+    <div class="wdots"><div class="wdot cl" data-close="win-contact"></div><div class="wdot mn" data-min="win-contact"></div><div class="wdot mx" data-max="win-contact"></div></div>
+    <span class="win-title">contact.sh</span><div class="win-spacer"></div>
+  </div>
+  <div class="contact-body">
+    <a class="contact-item" href="mailto:safouanebaadoud@gmail.com">
+      <div class="contact-icon" style="background:rgba(240,90,90,.1);border-color:rgba(240,90,90,.25);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <div><div class="contact-label">EMAIL</div><div class="contact-value">safouanebaadoud@gmail.com</div></div>
+    </a>
+    <a class="contact-item" href="https://github.com/safouane02" target="_blank" rel="noopener">
+      <div class="contact-icon" style="background:rgba(90,144,245,.1);border-color:rgba(90,144,245,.25);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+      <div><div class="contact-label">GITHUB</div><div class="contact-value">github.com/safouane02</div></div>
+    </a>
+    <a class="contact-item" href="tel:+213663580460">
+      <div class="contact-icon" style="background:rgba(57,255,130,.07);border-color:rgba(57,255,130,.2);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+      <div><div class="contact-label">PHONE</div><div class="contact-value">+213 663 580 460</div></div>
+    </a>
+    <div class="contact-item" style="cursor:default;">
+      <div class="contact-icon" style="background:rgba(57,255,130,.07);border-color:rgba(57,255,130,.2);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div><div class="contact-label">LOCATION</div><div class="contact-value">Algeria &#x1F1E9;&#x1F1FF;</div></div>
+    </div>
+  </div>
+</div>
+<!-- Context menu -->
+<div id="ctx-menu">
+  <div class="ctx-label">DESKTOP</div>
+  <div class="ctx-item" data-ctx="terminal"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>Open Terminal</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" data-ctx="about"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>About Safouane</div>
+  <div class="ctx-item" data-ctx="projects"><svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>View Projects</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" data-ctx="github"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub Profile &#x2197;</div>
+</div>
+<script>
+// ─── safOS v1.0 — github.com/safouane02 ───
+const clockEl = document.getElementById('tb-clock');
+function updateClock() {
+  const d = new Date();
+  clockEl.textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+updateClock(); setInterval(updateClock, 20000);
+
+let zTop = 300;
+function bringToFront(el) { el.style.zIndex = ++zTop; }
+
+const winOpen = {};
+const dockMap = { 'win-terminal':'dock-terminal','win-about':'dock-about','win-projects':'dock-projects','win-skills':'dock-skills','win-contact':'dock-contact' };
+
+function openWindow(id) {
+  if (id === 'github') { window.open('https://github.com/safouane02','_blank','noopener'); return; }
+  const win = document.getElementById(id);
+  if (!win) return;
+  win.classList.remove('hidden');
+  bringToFront(win);
+  winOpen[id] = true;
+  const dockId = dockMap[id];
+  if (dockId) document.getElementById(dockId)?.classList.add('open');
+  if (id === 'win-terminal') {
+    if (!win.dataset.booted) { win.dataset.booted = '1'; runBootSequence(); }
+    setTimeout(() => document.getElementById('term-input').focus(), 80);
+  }
+}
+
+function closeWindow(id) {
+  const win = document.getElementById(id);
+  if (!win) return;
+  win.classList.add('hidden');
+  winOpen[id] = false;
+  const dockId = dockMap[id];
+  if (dockId) document.getElementById(dockId)?.classList.remove('open');
+}
+
+function toggleWindow(id) {
+  if (id === 'github') { openWindow('github'); return; }
+  winOpen[id] ? closeWindow(id) : openWindow(id);
+}
+
+function setupDraggable(win) {
+  const bar = win.querySelector('.win-bar');
+  let dragging = false, ox = 0, oy = 0;
+  bar.addEventListener('mousedown', e => {
+    if (e.target.closest('.wdot')) return;
+    dragging = true; ox = e.clientX - win.offsetLeft; oy = e.clientY - win.offsetTop;
+    win.style.transform = 'none'; bringToFront(win); e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    win.style.left = Math.max(0, Math.min(e.clientX - ox, innerWidth  - win.offsetWidth))  + 'px';
+    win.style.top  = Math.max(28, Math.min(e.clientY - oy, innerHeight - win.offsetHeight - 54)) + 'px';
+  });
+  document.addEventListener('mouseup', () => { dragging = false; });
+  win.addEventListener('mousedown', () => bringToFront(win));
+}
+document.querySelectorAll('.win').forEach(setupDraggable);
+
+document.querySelectorAll('.wdot.cl').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); closeWindow(b.dataset.close); }));
+document.querySelectorAll('.wdot.mn').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); closeWindow(b.dataset.min); }));
+document.querySelectorAll('.wdot.mx').forEach(b => b.addEventListener('click', e => {
+  e.stopPropagation();
+  const win = document.getElementById(b.dataset.max);
+  if (!win) return;
+  if (win._maximized) { Object.assign(win.style, win._savedStyle); win._maximized = false; }
+  else {
+    win._savedStyle = { top:win.style.top, left:win.style.left, width:win.style.width, height:win.style.height, borderRadius:win.style.borderRadius, transform:win.style.transform };
+    Object.assign(win.style, { top:'28px', left:'0', width:'100vw', height:'calc(100vh - 82px)', borderRadius:'0', transform:'none' });
+    win._maximized = true;
+  }
+}));
+
+document.querySelectorAll('[data-target]').forEach(el => el.addEventListener('click', () => toggleWindow(el.dataset.target)));
+
+const ctxMenu = document.getElementById('ctx-menu');
+document.getElementById('desktop').addEventListener('contextmenu', e => {
+  e.preventDefault();
+  ctxMenu.style.left = Math.min(e.clientX, innerWidth - 180) + 'px';
+  ctxMenu.style.top  = Math.min(e.clientY, innerHeight - 200) + 'px';
+  ctxMenu.classList.add('show');
+});
+document.addEventListener('click', () => ctxMenu.classList.remove('show'));
+document.querySelectorAll('[data-ctx]').forEach(item => {
+  item.addEventListener('click', () => {
+    const a = item.dataset.ctx;
+    if (a==='terminal') openWindow('win-terminal');
+    else if (a==='about')    openWindow('win-about');
+    else if (a==='projects') openWindow('win-projects');
+    else if (a==='github')   openWindow('github');
+    ctxMenu.classList.remove('show');
+  });
+});
+
+// ── Terminal ──
+const termOut   = document.getElementById('term-output');
+const termInput = document.getElementById('term-input');
+let cmdHistory = [], histIdx = -1;
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function tPrint(html, delay) {
+  const el = document.createElement('div');
+  el.className = 'tline';
+  if (delay) { el.innerHTML = ''; setTimeout(() => { el.innerHTML = html; termOut.scrollTop = termOut.scrollHeight; }, delay); }
+  else { el.innerHTML = html; }
+  termOut.appendChild(el);
+  termOut.scrollTop = termOut.scrollHeight;
+}
+
+function tPromptLine(cmd) {
+  tPrint('<span class="g bld">safouane@safOS</span><span class="d">:</span><span class="cy bld">~</span><span class="d">$</span> <span class="w">' + esc(cmd) + '</span>');
+}
+
+const commands = {
+  help() {
+    ['','<span class="tsec">  ─── COMMANDS ─────────────────────────────────</span>','',
+     '  <span class="y bld">about</span>          <span class="m">—</span>  <span class="w">Who is Safouane?</span>',
+     '  <span class="y bld">skills</span>         <span class="m">—</span>  <span class="w">Technical skills & stack</span>',
+     '  <span class="y bld">projects</span>       <span class="m">—</span>  <span class="w">Portfolio projects</span>',
+     '  <span class="y bld">contact</span>        <span class="m">—</span>  <span class="w">Get in touch</span>',
+     '  <span class="y bld">education</span>      <span class="m">—</span>  <span class="w">Academic background</span>',
+     '  <span class="y bld">languages</span>      <span class="m">—</span>  <span class="w">Spoken languages</span>',
+     '  <span class="y bld">github</span>         <span class="m">—</span>  <span class="w">Open GitHub profile</span>',
+     '  <span class="y bld">whoami</span>         <span class="m">—</span>  <span class="w">Quick identity</span>',
+     '  <span class="y bld">uname</span>          <span class="m">—</span>  <span class="w">System information</span>',
+     '  <span class="y bld">ls</span>             <span class="m">—</span>  <span class="w">List filesystem</span>',
+     '  <span class="y bld">cat cv</span>         <span class="m">—</span>  <span class="w">Print full CV</span>',
+     '','<span class="tsec">  ─── WINDOWS ───────────────────────────────────</span>','',
+     '  <span class="y bld">open about</span>     <span class="m">—</span>  <span class="w">Open About window</span>',
+     '  <span class="y bld">open projects</span>  <span class="m">—</span>  <span class="w">Open Projects window</span>',
+     '  <span class="y bld">open skills</span>    <span class="m">—</span>  <span class="w">Open Skills window</span>',
+     '  <span class="y bld">open contact</span>   <span class="m">—</span>  <span class="w">Open Contact window</span>',
+     '','<span class="tsec">  ─── SYSTEM ────────────────────────────────────</span>','',
+     '  <span class="y bld">clear</span>          <span class="m">—</span>  <span class="w">Clear terminal</span>',
+     '  <span class="y bld">exit</span>           <span class="m">—</span>  <span class="w">... you can\'t leave :)</span>',
+     '','<span class="m">  ↑ ↓ history  ·  Tab autocomplete</span>','',
+    ].forEach((r,i) => tPrint(r, i*14));
+  },
+  about() {
+    ['','<span class="p bld">  ╔═══════════════════════════════════════════╗</span>',
+     '<span class="p bld">  ║</span>      <span class="g bld">ABOUT  SAFOUANE  BAADOUD</span>         <span class="p bld">║</span>',
+     '<span class="p bld">  ╚═══════════════════════════════════════════╝</span>','',
+     '  <span class="cy">Name      </span>  Safouane Baadoud',
+     '  <span class="cy">Role      </span>  Full-Stack Developer & Automation Engineer',
+     '  <span class="cy">Location  </span>  Algeria 🇩🇿',
+     '  <span class="cy">Email     </span>  safouanebaadoud@gmail.com',
+     '  <span class="cy">GitHub    </span>  <span class="g">github.com/safouane02</span>','',
+     '  <span class="w">Specialized in modern web apps, automation tools,</span>',
+     '  <span class="w">bots, scraping systems & desktop applications.</span>',
+     '  <span class="w">Passionate about clean, scalable code.</span>','',
+    ].forEach((r,i) => tPrint(r, i*20));
+  },
+  skills() {
+    ['','<span class="tsec">  TECHNICAL SKILLS</span>','',
+     '  <span class="o bld">Frontend</span>',
+     '    <span class="ttag ttag-g">React.js</span><span class="ttag ttag-g">Vite</span><span class="ttag ttag-g">Tailwind CSS</span><span class="ttag ttag-g">HTML5</span><span class="ttag ttag-g">CSS3</span>','',
+     '  <span class="b bld">Backend & Automation</span>',
+     '    <span class="ttag ttag-b">Python</span><span class="ttag ttag-b">Selenium</span><span class="ttag ttag-b">Playwright</span><span class="ttag ttag-b">Web Scraping</span>','',
+     '  <span class="y bld">Desktop & Bots</span>',
+     '    <span class="ttag ttag-y">PyQt5</span><span class="ttag ttag-y">Tkinter</span><span class="ttag ttag-y">Discord Bots</span>','',
+     '  <span class="m">Tools:  Git · GitHub · API Integration · Render</span>','',
+    ].forEach((r,i) => tPrint(r, i*18));
+  },
+  projects() {
+    ['','<span class="tsec">  PROJECTS  (4)</span>','',
+     '  <span class="g bld">◆ Safouane Escrow System</span>              <span class="m it">[Web App]</span>',
+     '    <span class="w">Secure platform for online service transactions.</span>',
+     '    <span class="d">React · Tailwind CSS · API Integration</span>','',
+     '  <span class="cy bld">◆ SF Discord Bot</span>                      <span class="m it">[Bot]</span>',
+     '    <span class="w">100+ commands — moderation, automation, music.</span>',
+     '    <span class="d">Python · Discord.py</span>','',
+     '  <span class="y bld">◆ Excel Automation Tool</span>               <span class="m it">[Desktop]</span>',
+     '    <span class="w">Auto-generates reports from messy Excel data.</span>',
+     '    <span class="d">Python · openpyxl · pandas</span>','',
+     '  <span class="p bld">◆ safOS Portfolio</span>                     <span class="m it">[Portfolio]</span>',
+     '    <span class="w">This very site. Because normal portfolios are boring.</span>',
+     '    <span class="d">HTML · CSS · Vanilla JS</span>','',
+    ].forEach((r,i) => tPrint(r, i*16));
+  },
+  contact() {
+    ['','<span class="tsec">  CONTACT</span>','',
+     '  <span class="cy">Email  </span>  <span class="w">safouanebaadoud@gmail.com</span>',
+     '  <span class="cy">Phone  </span>  <span class="w">+213 663 580 460</span>',
+     '  <span class="cy">GitHub </span>  <span class="g">github.com/safouane02</span>',
+     '  <span class="cy">Country</span>  <span class="w">Algeria 🇩🇿</span>','',
+     '  <span class="m">→ type <span class="y">github</span> to open profile in new tab</span>','',
+    ].forEach((r,i) => tPrint(r, i*22));
+  },
+  education() {
+    ['','<span class="tsec">  EDUCATION</span>','',
+     '  <span class="y bld">Science & Technology Studies</span>',
+     '  <span class="m">Electrical Engineering Background</span>','',
+     '  <span class="w">Self-taught full-stack dev with a strong engineering</span>',
+     '  <span class="w">foundation. Theory meets hands-on practice.</span>','',
+    ].forEach((r,i) => tPrint(r, i*22));
+  },
+  languages() {
+    ['','<span class="tsec">  SPOKEN LANGUAGES</span>','',
+     '  <span class="g bld">Arabic  </span>  <span class="g">██████████</span>  <span class="w">Native</span>',
+     '  <span class="cy bld">English </span>  <span class="cy">████████</span><span class="d">░░</span>  <span class="w">Professional</span>',
+     '  <span class="y bld">French  </span>  <span class="y">████████</span><span class="d">░░</span>  <span class="w">Professional</span>','',
+    ].forEach((r,i) => tPrint(r, i*28));
+  },
+  github() {
+    tPrint('  <span class="m">Opening</span> <span class="g">github.com/safouane02</span> <span class="m">in new tab...</span>');
+    setTimeout(() => window.open('https://github.com/safouane02','_blank','noopener'), 400);
+  },
+  whoami() { tPrint('  <span class="g bld">safouane</span> <span class="m">—</span> Full-Stack Developer & Automation Engineer, Algeria 🇩🇿'); },
+  uname() {
+    ['','  <span class="y">OS      </span>  safOS v1.0 (Safouane Edition)',
+     '  <span class="y">Kernel  </span>  safouane-portfolio-2025',
+     '  <span class="y">Shell   </span>  bash 5.2.0-safouane',
+     '  <span class="y">Stack   </span>  React · Python · HTML · Vanilla JS',
+     '  <span class="y">GitHub  </span>  <span class="g">github.com/safouane02</span>',
+     '  <span class="y">Mood    </span>  Building cool things 🚀','',
+    ].forEach((r,i) => tPrint(r, i*18));
+  },
+  ls() {
+    tPrint('');
+    tPrint('  <span class="cy bld">about/</span>      <span class="cy bld">skills/</span>     <span class="cy bld">projects/</span>    <span class="cy bld">contact/</span>');
+    tPrint('  <span class="cy bld">education/</span>  <span class="cy bld">languages/</span>  <span class="m">cv.txt</span>       <span class="m">README.md</span>');
+    tPrint(''); tPrint('  <span class="m">6 directories, 2 files</span>'); tPrint('');
+  },
+  'cat cv'() {
+    commands.about();
+    setTimeout(() => commands.skills(),    550);
+    setTimeout(() => commands.projects(),  1100);
+    setTimeout(() => commands.education(), 2100);
+    setTimeout(() => commands.languages(), 2600);
+    setTimeout(() => commands.contact(),   3050);
+  },
+  'open about'()    { openWindow('win-about');    tPrint('  <span class="m">Launching</span> <span class="p">About</span> <span class="m">window...</span>'); },
+  'open projects'() { openWindow('win-projects'); tPrint('  <span class="m">Launching</span> <span class="y">Projects</span> <span class="m">window...</span>'); },
+  'open skills'()   { openWindow('win-skills');   tPrint('  <span class="m">Launching</span> <span class="cy">Skills</span> <span class="m">window...</span>'); },
+  'open contact'()  { openWindow('win-contact');  tPrint('  <span class="m">Launching</span> <span class="r">Contact</span> <span class="m">window...</span>'); },
+  clear() { termOut.innerHTML = ''; },
+  exit() {
+    tPrint('  <span class="r">Permission denied:</span> <span class="w">You cannot exit safOS. It follows you.</span>');
+    setTimeout(() => tPrint('  <span class="m">  (type <span class="y">help</span> to explore)</span>'), 600);
+  },
+};
+
+const cmdKeys = Object.keys(commands);
+
+function executeCommand(raw) {
+  const cmd = raw.trim().toLowerCase();
+  if (!cmd) return;
+  cmdHistory.unshift(raw.trim()); histIdx = -1;
+  tPromptLine(raw.trim());
+  if (commands[cmd]) commands[cmd]();
+  else if (cmd.startsWith('cat ')) commands['cat cv']();
+  else if (cmd.startsWith('open ')) tPrint('  <span class="r">no window named:</span> <span class="w">' + esc(cmd.slice(5)) + '</span>');
+  else tPrint('  <span class="r">command not found:</span> <span class="w">' + esc(cmd) + '</span> <span class="m">— try \'help\'</span>');
+  tPrint('');
+}
+
+termInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { const v = termInput.value; termInput.value = ''; executeCommand(v); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); if (histIdx < cmdHistory.length-1) { histIdx++; termInput.value = cmdHistory[histIdx]; } }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); if (histIdx > 0) { histIdx--; termInput.value = cmdHistory[histIdx]; } else { histIdx=-1; termInput.value=''; } }
+  else if (e.key === 'Tab') { e.preventDefault(); const p = termInput.value.trim().toLowerCase(); if (!p) return; const m = cmdKeys.find(k => k.startsWith(p)); if (m) termInput.value = m; }
+});
+document.getElementById('win-terminal').addEventListener('click', () => termInput.focus());
+
+function runBootSequence() {
+  ['<span class="asc">  ███████╗ █████╗ ███████╗ ██████╗ ███████╗</span>',
+   '<span class="asc">  ██╔════╝██╔══██╗██╔════╝██╔═══██╗██╔════╝</span>',
+   '<span class="asc">  ███████╗███████║█████╗  ██║   ██║███████╗</span>',
+   '<span class="asc">  ╚════██║██╔══██║██╔══╝  ██║   ██║╚════██║</span>',
+   '<span class="asc">  ███████║██║  ██║██║     ╚██████╔╝███████║</span>',
+   '<span class="asc">  ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚══════╝</span>','',
+   '  <span class="m">safOS v1.0  —  Safouane Baadoud\'s Personal System</span>',
+   '  <span class="m">github.com/safouane02  ·  safouanebaadoud@gmail.com</span>','',
+   '<span class="g">  [  OK  ]</span>  <span class="m">Started session manager</span>',
+   '<span class="g">  [  OK  ]</span>  <span class="m">Mounted /home/safouane</span>',
+   '<span class="g">  [  OK  ]</span>  <span class="m">Loaded portfolio data</span>',
+   '<span class="g">  [  OK  ]</span>  <span class="m">Reached target: Terminal ready</span>','',
+   '  Welcome, visitor. Type <span class="y bld">help</span> to explore.','',
+  ].forEach((l,i) => tPrint(l, i*55));
+}
+
+// boot screen
+const bootAscii  = document.getElementById('boot-ascii');
+const bootLog    = document.getElementById('boot-log');
+const bootBar    = document.getElementById('boot-bar');
+const bootScreen = document.getElementById('boot-screen');
+bootAscii.textContent =
+`███████╗ █████╗ ███████╗ ██████╗ ███████╗
+██╔════╝██╔══██╗██╔════╝██╔═══██╗██╔════╝
+███████╗███████║█████╗  ██║   ██║███████╗
+╚════██║██╔══██║██╔══╝  ██║   ██║╚════██║
+███████║██║  ██║██║     ╚██████╔╝███████║
+╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚══════╝`;
+['Loading kernel modules...','Mounting /home/safouane','Starting portfolio daemon',
+ 'Loading project data','Initializing desktop environment','System ready'].forEach((msg,i) => {
+  setTimeout(() => {
+    const row = document.createElement('div');
+    row.className = 'boot-entry';
+    row.innerHTML = '<span class="boot-ok">[  OK  ]</span><span class="boot-info">' + msg + '</span>';
+    bootLog.appendChild(row);
+    bootBar.style.width = Math.round(((i+1)/6)*100) + '%';
+    if (i === 5) setTimeout(() => { bootScreen.classList.add('fade-out'); setTimeout(() => { bootScreen.style.display='none'; }, 520); }, 400);
+  }, i*280+200);
+});
+</script>
+
+</body>
+</html>
